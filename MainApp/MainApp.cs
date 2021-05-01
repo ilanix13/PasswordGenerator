@@ -3,42 +3,50 @@ using System.IO;
 using System.Text;
 using System.Linq;
 using System.Windows.Forms;
+using System.Collections.Generic;
 
 namespace PasswordGenerator
 {
     public partial class MainApp : Form
     {
+        private static int passwordLength;
+        private static readonly List<char> Symbols = new List<char>();
+
+        private static readonly char[] Lower = Enumerable.Range('a', 'z' - 'a' + 1).Select(c => (char)c).ToArray();
+        private static readonly char[] Upper = Enumerable.Range('A', 'Z' - 'A' + 1).Select(c => (char)c).ToArray();
+        private static readonly char[] Digits = Enumerable.Range('0', '9' - '0' + 1).Select(c => (char)c).ToArray();
+        private static readonly char[] SpecSymb = Enumerable.Range('!', '/' - '!' + 1).Select(c => (char)c).ToArray();
+
         public MainApp()
         {
             InitializeComponent();
             comboBoxLength.SelectedIndex = 0;
-            radioButtonAll.Checked = true;
         }
-        public void PasswordParameters()
+        private void PasswordParameters()
         {
-            PasswordFormation.Symbols.Clear();
+            Symbols.Clear();
 
             if (chkBoxLower.Checked)
             {
-                PasswordFormation.Symbols.AddRange(PasswordFormation.Lower);
+                Symbols.AddRange(Lower);
             }
 
             if (chkBoxUpper.Checked)
             {
-                PasswordFormation.Symbols.AddRange(PasswordFormation.Upper);
+                Symbols.AddRange(Upper);
             }
 
             if (chkBoxNumber.Checked)
             {
-                PasswordFormation.Symbols.AddRange(PasswordFormation.Digits);
+                Symbols.AddRange(Digits);
             }
 
             if (chkBoxSym.Checked)
             {
-                PasswordFormation.Symbols.AddRange(PasswordFormation.SpecSymb);
+                Symbols.AddRange(SpecSymb);
             }
 
-            PasswordFormation.passwordLength = int.Parse(comboBoxLength.Text);
+            passwordLength = int.Parse(comboBoxLength.Text);
         }
         private void btnRes_Click(object sender, EventArgs e)
         {           
@@ -49,7 +57,7 @@ namespace PasswordGenerator
             {
                 for (int i = 0; i < counter.Value; i++)
                 {
-                    textBoxRes.Text += PasswordFormation.GetPass(PasswordFormation.Symbols, PasswordFormation.passwordLength) + Environment.NewLine;
+                    textBoxRes.Text += PasswordFormation.GetPass(Symbols, passwordLength) + Environment.NewLine;
                 }
 
                 textBoxRes.Text = textBoxRes.Text.Remove(textBoxRes.Text.LastIndexOf(Environment.NewLine));
@@ -76,11 +84,6 @@ namespace PasswordGenerator
         private void btnClean_Click(object sender, EventArgs e)
         {
             textBoxRes.Clear();
-            chkBoxLower.Checked = false;
-            chkBoxUpper.Checked = false;
-            chkBoxNumber.Checked = false;
-            chkBoxSym.Checked = false;
-            radioButtonCustom.Checked = true;
             comboBoxLength.SelectedIndex = 0;
             counter.Value = 5;
         }
@@ -110,67 +113,5 @@ namespace PasswordGenerator
         {
             textBoxRes.Lines = textBoxRes.Lines.OrderBy(l => l).ToArray();
         }
-
-        #region additional
-        private void AutoCheckEnabled()
-        {          
-           chkBoxLower.AutoCheck = true;
-           chkBoxUpper.AutoCheck = true;
-           chkBoxNumber.AutoCheck = true;
-           chkBoxSym.AutoCheck = true;
-        }
-        private void AutoCheckDisabled()
-        {
-            chkBoxLower.AutoCheck = false;
-            chkBoxUpper.AutoCheck = false;
-            chkBoxNumber.AutoCheck = false;
-            chkBoxSym.AutoCheck = false;
-        }
-        private void btnRes_MouseHover(object sender, EventArgs e)
-        {
-            ToolTip.SetToolTip(btnRes, "Generate new password set");
-        }
-        private void btnCopy_MouseHover(object sender, EventArgs e)
-        {
-            ToolTip.SetToolTip(btnCopy, "Copy password set to clipboard");
-        }
-        private void btnClean_MouseHover(object sender, EventArgs e)
-        {
-            ToolTip.SetToolTip(btnClean, "Set defaults settings and clear fields");
-        }
-        private void btntoFile_MouseHover(object sender, EventArgs e)
-        {
-            ToolTip.SetToolTip(btntoFile, "Write password set to passwords.txt");
-        }
-        private void btnSort_MouseHover(object sender, EventArgs e)
-        {
-            ToolTip.SetToolTip(btnSort, "Sort password set");
-        }
-        private void AboutToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            About aboutForm = new About();
-            aboutForm.ShowDialog();
-        }
-        private void radioButtonLetters_CheckedChanged(object sender, EventArgs e)
-        {
-            chkBoxLower.Checked = true;
-            chkBoxUpper.Checked = true;
-            chkBoxNumber.Checked = false;
-            chkBoxSym.Checked = false;
-            AutoCheckDisabled();
-        }
-        private void radioButtonAll_CheckedChanged(object sender, EventArgs e)
-        {
-            chkBoxLower.Checked = true;
-            chkBoxUpper.Checked = true;
-            chkBoxNumber.Checked = true;
-            chkBoxSym.Checked = true;
-            AutoCheckDisabled();
-        }
-        private void radioButtonCustom_CheckedChanged(object sender, EventArgs e)
-        {
-            AutoCheckEnabled();
-        }
-        #endregion
     }
 }
