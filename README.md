@@ -1,1 +1,3 @@
-Password generator written in C# WinForms. User can select the number of generated passwords, select the length, select the characters from which they will be generated. The generated passwords can be sorted, copied to the clipboard or saved to a file.
+Simple password generator application written in C# WinForms.
+
+by [Ilan Sokolskyi](https://github.com/ilanix13)
